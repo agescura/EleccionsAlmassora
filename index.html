@@ -15,7 +15,12 @@
     <script src="js/eleccionsGenerals2015.js"></script>
     <script>
 
-        var map = L.map('map').setView([39.93758, -0.03133], 14);
+        var llistaMaxima = new L.LayerGroup();
+        var map = L.map('map', {
+            center: [39.93758, -0.03133],
+            zoom: 14,
+            layers: [llistaMaxima]
+        });
 
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IjZjNmRjNzk3ZmE2MTcwOTEwMGY0MzU3YjUzOWFmNWZhIn0.Y8bhBaUMqFiPrDRW9hieoQ', {
             maxZoom: 18,
@@ -24,8 +29,6 @@
             'Imagery © <a href="http://mapbox.com">Mapbox</a>',
             id: 'mapbox.streets'
         }).addTo(map);
-
-        var llistaMaxima = new L.LayerGroup();
 
         districtes.map( function(districte) {
             L.geoJson(districte, {
