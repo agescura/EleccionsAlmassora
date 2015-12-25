@@ -4,3 +4,5 @@ Es tracta de les eleccions generals 2015 separat per districtes i visualitzat am
 Si voleu veure 
 
 http://htmlpreview.github.io/?https://github.com/agescura/EleccionsAlmassora/blob/master/index.html
+
+falla la intensitat del color, ja revisaré quan tinga un poc de temps.
