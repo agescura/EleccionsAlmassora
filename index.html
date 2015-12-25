@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="bower_components/leaflet/dist/leaflet.css" />
+
+</head>
+<body>
+
+    <div id="map" style="width: auto; height: 600px"></div>
+
+    <script src="bower_components/leaflet/dist/leaflet.js"></script>
+    <script src="js/eleccionsGenerals2015.js"></script>
+    <script>
+
+        var map = L.map('map').setView([39.93758, -0.03133], 14);
+
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IjZjNmRjNzk3ZmE2MTcwOTEwMGY0MzU3YjUzOWFmNWZhIn0.Y8bhBaUMqFiPrDRW9hieoQ', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            id: 'mapbox.streets'
+        }).addTo(map);
+
+        var llistaMaxima = new L.LayerGroup();
+
+        districtes.map( function(districte) {
+            L.geoJson(districte, {
+                style: function (feature) {
+                    if ( feature.properties.PP > feature.properties.PSPV &&
+                         feature.properties.PP > feature.properties.ComPodem &&
+                         feature.properties.PP > feature.properties.Cs )
+                        return {color: '#0000ff', "opacity": 1.0, "fillOpacity": 0.5};
+                    else if ( feature.properties.PSPV > feature.properties.ComPodem &&
+                            feature.properties.PSPV > feature.properties.Cs )
+                        return {color: '#ff0000', "opacity": 1.0, "fillOpacity": 0.5};
+                    else if ( feature.properties.ComPodem > feature.properties.Cs )
+                        return {color: '#00ff00', "opacity": 1.0, "fillOpacity": 0.5};
+                    else
+                        return {color: '#ffff00', "opacity": 1.0, "fillOpacity": 0.5};
+                },
+                onEachFeature: function (feature, layer) {
+                    layer.bindPopup("PP " + feature.properties.PP + "<br />PSPV " + feature.properties.PSPV + "<br />ComPodem " + feature.properties.ComPodem + "<br />C's " + feature.properties.Cs);
+                }
+            }).addTo(llistaMaxima);
+        });
+
+
+        var PP = new L.LayerGroup();
+        districtes.map( function(districte) {
+            L.geoJson(districte, {
+                style: function (feature) {
+                    var color = parseInt(parseFloat(feature.properties.PP) / parseFloat(feature.properties.Totals) * 100.0);
+                    return {color: 'rgb(0,' + color + ',0)', "opacity": 1.0, "fillOpacity": 0.5};
+                },
+                onEachFeature: function (feature, layer) {
+                    var color = parseInt(parseFloat(feature.properties.PP) / parseFloat(feature.properties.Totals) * 100.0);
+                    layer.bindPopup("PP " + feature.properties.PP + "<br />Vots totals " + feature.properties.Totals + "<br />Força del vot " + color);
+                }
+            }).addTo(PP);
+        });
+
+        var PSPV = new L.LayerGroup();
+        districtes.map( function(districte) {
+            L.geoJson(districte, {
+                style: function (feature) {
+                    var color = parseInt(parseFloat(feature.properties.PSPV) / parseFloat(feature.properties.Totals) * 100.0);
+                    color = parseInt(color / 50.0 * 255.0);
+                    return {color: 'rgb('+color+',0,0)', "opacity": 1.0, "fillOpacity": 0.5};
+                },
+                onEachFeature: function (feature, layer) {
+                    var color = parseInt(parseFloat(feature.properties.PSPV) / parseFloat(feature.properties.Totals) * 100.0);
+                    layer.bindPopup("PSPV " + feature.properties.PSPV + "<br />Vots totals " + feature.properties.Totals + "<br />Força del vot " + color);
+                }
+            }).addTo(PSPV);
+        });
+
+        var ComPodem = new L.LayerGroup();
+        districtes.map( function(districte) {
+            L.geoJson(districte, {
+                style: function (feature) {
+                    var color = parseInt(parseFloat(feature.properties.ComPodem) / parseFloat(feature.properties.Totals) * 100.0);
+                    color = parseInt(color / 50.0 * 255.0);
+                    return {color: 'rgb(0,' + color + ',0)', "opacity": 1.0, "fillOpacity": 0.5};
+                },
+                onEachFeature: function (feature, layer) {
+                    var color = parseInt(parseFloat(feature.properties.ComPodem) / parseFloat(feature.properties.Totals) * 100.0);
+                    layer.bindPopup("ComPodem " + feature.properties.ComPodem + "<br />Vots totals " + feature.properties.Totals + "<br />Força del vot " + color);
+                }
+            }).addTo(ComPodem);
+        });
+
+        var Cs = new L.LayerGroup();
+        districtes.map( function(districte) {
+            L.geoJson(districte, {
+                style: function (feature) {
+                    var color = parseInt(parseFloat(feature.properties.Cs) / parseFloat(feature.properties.Totals) * 100.0);
+                    color = parseInt(color/50*255);
+                    return {color: 'rgb(0,' + color + ',0)', "opacity": 1.0, "fillOpacity": 0.5};
+                },
+                onEachFeature: function (feature, layer) {
+                    var color = parseInt(parseFloat(feature.properties.Cs) / parseFloat(feature.properties.Totals) * 100.0);
+                    layer.bindPopup("Cs " + feature.properties.Cs + "<br />Vots totals " + feature.properties.Totals + "<br />Força del vot " + color);
+                }
+            }).addTo(Cs);
+        });
+
+        var EixDreta = new L.LayerGroup();
+        districtes.map( function(districte) {
+            L.geoJson(districte, {
+                style: function (feature) {
+                    var color = parseInt((parseFloat(feature.properties.Cs)+parseFloat(feature.properties.PP)) / parseFloat(feature.properties.Totals) * 100.0);
+                    color = parseInt(color/50*255);
+                    return {color: 'rgb(0,0,' + color + ')', "opacity": 1.0, "fillOpacity": 0.5};
+                },
+                onEachFeature: function (feature, layer) {
+                    var eixDreta = parseFloat(feature.properties.Cs) + parseFloat(feature.properties.PP);
+                    var color = parseInt((parseFloat(feature.properties.Cs)+parseFloat(feature.properties.PP)) / parseFloat(feature.properties.Totals) * 100.0);
+                    layer.bindPopup("Eix Dreta " + eixDreta + "<br />Vots totals " + feature.properties.Totals + "<br />Força del vot " + color);
+                }
+            }).addTo(EixDreta);
+        });
+
+        var EixEsquerra = new L.LayerGroup();
+        districtes.map( function(districte) {
+            L.geoJson(districte, {
+                style: function (feature) {
+                    var color = parseInt((parseFloat(feature.properties.PSPV)+parseFloat(feature.properties.ComPodem)) / parseFloat(feature.properties.Totals) * 100.0);
+                    color = parseInt(color/50*255);
+                    return {color: 'rgb(' + color + ',0,0)', "opacity": 1.0, "fillOpacity": 0.5};
+                },
+                onEachFeature: function (feature, layer) {
+                    var eixEsquerra = parseFloat(feature.properties.PSPV) + parseFloat(feature.properties.ComPodem);
+                    var color = parseInt((parseFloat(feature.properties.PSPV)+parseFloat(feature.properties.ComPodem)) / parseFloat(feature.properties.Totals) * 100.0);
+                    layer.bindPopup("Eix Esquerra " + eixEsquerra + "<br />Vots totals " + feature.properties.Totals + "<br />Força del vot " + color);
+                }
+            }).addTo(EixEsquerra);
+        });
+
+        var overlays = {
+            "Total": llistaMaxima,
+            "PP": PP,
+            "PSPV": PSPV,
+            "ComPodem": ComPodem,
+            "Cs": Cs,
+            "Eix Dreta": EixDreta,
+            "Eix Esquerra": EixEsquerra
+        };
+
+        L.control.layers(overlays).addTo(map);
+
+
+    </script>
+
+
+</body>
+</html>
